@@ -1,55 +1,27 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 public class Main {
+    private static StringBuilder logBuilder = new StringBuilder();
+
     public static void main(String[] args) {
-        String gamesPath = "/Users/kirillmakarov/Games";
+        List<String> listOfPath = List.of("/Users/kirillmakarov/Games/src", "/Users/kirillmakarov/Games/src/main",
+                "/Users/kirillmakarov/Games/src/test", "/Users/kirillmakarov/Games/res",
+                "/Users/kirillmakarov/Games/res/drawables", "/Users/kirillmakarov/Games/res/vectors",
+                "/Users/kirillmakarov/Games/res/icons", "/Users/kirillmakarov/Games/savegames",
+                "/Users/kirillmakarov/Games/temp");
 
-        File srcMainDir = new File(gamesPath + "/src/main");
-        File srcTestDir = new File(gamesPath + "/src/test");
-        File resDrawablesDir = new File(gamesPath + "/res/drawables");
-        File resVectorsDir = new File(gamesPath + "/res/vectors");
-        File resIconsDir = new File(gamesPath + "/res/icons");
-        File savegamesDir = new File(gamesPath + "/savegames");
-        File tempDir = new File(gamesPath + "/temp");
-
-        boolean srcMainDirCreated = srcMainDir.mkdirs();
-        boolean srcTestDirCreated = srcTestDir.mkdirs();
-        boolean resDrawablesDirCreated = resDrawablesDir.mkdirs();
-        boolean resVectorsDirCreated = resVectorsDir.mkdirs();
-        boolean resIconsDirCreated = resIconsDir.mkdirs();
-        boolean savegamesDirCreated = savegamesDir.mkdir();
-        boolean tempDirCreated = tempDir.mkdir();
-
-        File mainFile = new File(gamesPath + "/src/main/Main.java");
-        File utilsFile = new File(gamesPath + "/src/main/Utils.java");
-        File tempFile = new File(gamesPath + "/temp/temp.txt");
-
-        boolean mainFileCreated = false;
-        boolean utilsFileCreated = false;
-        boolean tempFileCreated = false;
-
-        try {
-            mainFileCreated = mainFile.createNewFile();
-            utilsFileCreated = utilsFile.createNewFile();
-            tempFileCreated = tempFile.createNewFile();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        for (String directory : listOfPath) {
+            createDirectory(directory);
         }
 
-        StringBuilder logBuilder = new StringBuilder();
-        logBuilder.append("src,main и test директории созданы: ").append(srcMainDirCreated &&
-                srcTestDirCreated).append("\n");
-        logBuilder.append("res,drawable,vectors и icons директории созданы: ").append(resDrawablesDirCreated &&
-                resVectorsDirCreated && resIconsDirCreated).append("\n");
-        logBuilder.append("savegames директория создана: ").append(savegamesDirCreated).append("\n");
-        logBuilder.append("temp директория создана: ").append(tempDirCreated).append("\n");
-        logBuilder.append("Файл Main.java создан: ").append(mainFileCreated).append("\n");
-        logBuilder.append("Файл Utils.java создан: ").append(utilsFileCreated).append("\n");
-        logBuilder.append("Файл temp.txt создан: ").append(tempFileCreated).append("\n");
+        createFile("/Users/kirillmakarov/Games/src/main", "Main.java");
+        createFile("/Users/kirillmakarov/Games/src/main", "Utils.java");
+        createFile("/Users/kirillmakarov/Games/temp", "temp.txt");
 
-        try (FileWriter writer = new FileWriter(tempFile)) {
+        try (FileWriter writer = new FileWriter("/Users/kirillmakarov/Games/temp/temp.txt")) {
             writer.write(logBuilder.toString());
             writer.flush();
         } catch (IOException e) {
@@ -57,5 +29,27 @@ public class Main {
         }
 
         System.out.println("Установка игры завершена!");
+    }
+
+    private static void createDirectory(String path) {
+        File newDir = new File(path);
+        if (newDir.mkdir()) {
+            logBuilder.append("Директория ").append(path).append(" создана\n");
+        } else {
+            logBuilder.append("Не удалось создать директорию ").append(path).append("\n");
+        }
+    }
+
+    private static void createFile(String path, String fileName) {
+        File newFile = new File(path, fileName);
+        try {
+            if (newFile.createNewFile()) {
+                logBuilder.append("Файл ").append(fileName).append(" создан\n");
+            } else {
+                logBuilder.append("Не удалось создать файл ").append(fileName).append("\n");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
